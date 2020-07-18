@@ -4,9 +4,10 @@ defmodule Letterbexd do
   """
 
   def get_followees(user_name) do
-    friends =
-      HTTPoison.get("https://letterboxd.com/#{user_name}/following/")
-      |> to_friends
+    friends = user_name
+    |> get_user_profile
+    |> get_following_pages
+    |> Enum.reduce([], fn (page, acc) -> fetch_following_page("https://letterboxd.com/#{user_name}/following/page/#{page}/", acc) end)
 
     {:ok, friends}
   end
@@ -55,6 +56,23 @@ defmodule Letterbexd do
     |> Enum.filter(&(Floki.find(&1, "span:fl-contains('#{span}')") != []))
     |> Floki.find("strong")
     |> Floki.text()
+    |> String.replace(",", "")
     |> String.to_integer()
+  end
+
+  defp get_following_pages({:ok, %UserProfile{ following: following }}) do
+    pages = div(following, 25)
+    if pages * 25 < following do
+      1..(pages + 1)
+    else
+      1..pages
+    end
+  end
+
+  defp fetch_following_page(url, acc) do
+    friends = url
+    |> HTTPoison.get
+    |> to_friends
+    acc ++ friends
   end
 end

@@ -8,6 +8,12 @@ defmodule LetterbexdTest do
     assert followees |> Enum.member?(expected)
   end
 
+  test "returns followees list with all pages" do
+    {:ok, followees} = Letterbexd.get_followees("danielpilon")
+    {:ok, %UserProfile{following: following}} = Letterbexd.get_user_profile("danielpilon")
+    assert Enum.count(followees) == following
+  end
+
   test "returns user profile" do
     {:ok, user_profile} = Letterbexd.get_user_profile("dmyoko")
 
