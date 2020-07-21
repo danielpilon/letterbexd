@@ -1,6 +1,15 @@
 defmodule UserProfile do
+  @type t :: %UserProfile{
+          name: String.t(),
+          films: integer(),
+          following: integer(),
+          followers: integer(),
+          id: String.t()
+        }
+  @enforce_keys [:name, :films, :following, :followers, :id]
   defstruct [:name, :films, :following, :followers, :id]
 
+  @spec from(String.t()) :: {:ok, UserProfile.t()}
   def from(user_name) do
     user_profile =
       HTTPoison.get("https://letterboxd.com/#{user_name}/")
