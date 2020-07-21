@@ -3,28 +3,15 @@ defmodule LetterbexdTest do
   doctest Letterbexd
 
   test "returns followees list" do
-    {:ok, followees} = Letterbexd.get_followees("dmyoko")
+    {:ok, user_profile} = UserProfile.from("dmyoko")
+    {:ok, followees} = Letterbexd.get_followees(user_profile)
     expected = %Friend{name: "Daniel Pilon", profile_url: "https://letterboxd.com/danielpilon/"}
     assert followees |> Enum.member?(expected)
   end
 
   test "returns followees list with all pages" do
-    {:ok, followees} = Letterbexd.get_followees("danielpilon")
-    {:ok, %UserProfile{following: following}} = Letterbexd.get_user_profile("danielpilon")
-    assert Enum.count(followees) == following
-  end
-
-  test "returns user profile" do
-    {:ok, user_profile} = Letterbexd.get_user_profile("dmyoko")
-
-    expected = %UserProfile{
-      name: "Daniel Moreira Yokoyama",
-      followers: 16,
-      following: 13,
-      films: 389,
-      id: "dmyoko"
-    }
-
-    assert user_profile == expected
+    {:ok, user_profile} = UserProfile.from("danielpilon")
+    {:ok, followees} = Letterbexd.get_followees(user_profile)
+    assert Enum.count(followees) == user_profile.following
   end
 end
