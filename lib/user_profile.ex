@@ -4,26 +4,26 @@ defmodule UserProfile do
           films: integer(),
           following: integer(),
           followers: integer(),
-          id: String.t()
+          user_id: String.t()
         }
-  @enforce_keys [:name, :films, :following, :followers, :id]
-  defstruct [:name, :films, :following, :followers, :id]
+  @enforce_keys [:name, :films, :following, :followers, :user_id]
+  defstruct [:name, :films, :following, :followers, :user_id]
 
   @spec from(String.t()) :: {:ok, UserProfile.t()}
-  def from(user_name) do
+  def from(user_id) do
     user_profile =
-      HTTPoison.get("https://letterboxd.com/#{user_name}/")
-      |> to_user_profile(user_name)
+      HTTPoison.get("https://letterboxd.com/#{user_id}/")
+      |> to_user_profile(user_id)
 
     {:ok, user_profile}
   end
 
-  defp to_user_profile({:ok, %HTTPoison.Response{status_code: 200, body: body}}, user_name) do
+  defp to_user_profile({:ok, %HTTPoison.Response{status_code: 200, body: body}}, user_id) do
     {:ok, parsed} = body |> Floki.parse_document()
 
     [name] = parsed |> Floki.find("div.profile-name-wrap h1.title-1") |> Floki.attribute("title")
     films = value_from(parsed, "Films")
-    followers = value_from(parsed, "Followers")
+    followers = value_from(parsed, "Follower")
     following = value_from(parsed, "Following")
 
     %UserProfile{
@@ -31,7 +31,7 @@ defmodule UserProfile do
       films: films,
       followers: followers,
       following: following,
-      id: user_name
+      user_id: user_id
     }
   end
 

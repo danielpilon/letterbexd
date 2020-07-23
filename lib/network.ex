@@ -1,7 +1,8 @@
 defmodule Network do
   @type friend :: %{
           name: String.t(),
-          profile_url: String.t()
+          profile_url: String.t(),
+          user_id: String.t()
         }
   @type t :: %Network{
           followees: list(friend)
@@ -9,8 +10,8 @@ defmodule Network do
   defstruct followees: []
 
   @spec from(UserProfile.t()) :: {:ok, Network.t()}
-  def from(%UserProfile{id: id, following: following}) do
-    following_url = "https://letterboxd.com/#{id}/following/page/"
+  def from(%UserProfile{user_id: user_id, following: following}) do
+    following_url = "https://letterboxd.com/#{user_id}/following/page/"
 
     followees =
       following
@@ -19,6 +20,9 @@ defmodule Network do
 
     {:ok, %Network{followees: followees}}
   end
+
+  @spec from({:ok, UserProfile.t()}) :: {:ok, Network.t()}
+  def from({:ok, %UserProfile{} = user_profile}), do: from(user_profile)
 
   defp to_friends({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
     {:ok, parsed} = body |> Floki.parse_document()
@@ -33,7 +37,8 @@ defmodule Network do
 
     %{
       name: friend_name |> String.trim(),
-      profile_url: "https://letterboxd.com#{href}"
+      profile_url: "https://letterboxd.com#{href}",
+      user_id: href |> String.replace("/", "")
     }
   end
 

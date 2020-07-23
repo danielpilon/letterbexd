@@ -1,18 +1,32 @@
 defmodule Films do
+  @type t :: %Films{
+          id: String.t(),
+          url: String.t()
+        }
   @enforce_keys [:id, :url]
   defstruct [:id, :url]
 
+  @spec by_rating(
+          String.t(),
+          :five
+          | :four
+          | :four_and_half
+          | :half
+          | :one
+          | :one_and_half
+          | :three
+          | :three_and_half
+          | :two
+          | :two_and_half
+        ) :: {:ok, list(Films.t())}
   def by_rating(user_id, rating) do
     url = "https://letterboxd.com/#{user_id}/films/ratings/rated/#{Rating.from(rating)}/"
 
-    quantity =
+    films =
       url
       |> HTTPoison.get()
       |> get_ratings_quantity()
-
-    films =
-      quantity
-      |> get_movie_pages
+      |> get_movie_pages()
       |> Enum.reduce([], &fetch_movies_page("#{url}page/#{&1}/", &2))
 
     {:ok, films}
@@ -25,17 +39,17 @@ defmodule Films do
       parsed
       |> Floki.find(".ui-block-heading")
       |> Floki.text()
+      |> HtmlEntities.decode()
 
-    quantity =
-      Regex.named_captures(~r/rated\s(?<quantity>[0-9].)/, heading)
-      |> Map.get("quantity")
-      |> String.to_integer()
-
-    quantity
+    (Regex.named_captures(~r/rated\s(?<quantity>[0-9].*)films/, heading) ||
+       %{})
+    |> Map.get("quantity", "0")
+    |> String.trim()
+    |> String.to_integer()
   end
 
   defp get_movie_pages(following) do
-    pages = (following / 18) |> Float.ceil(0) |> trunc()
+    pages = (following / 18) |> Float.ceil(0) |> trunc() |> Kernel.max(1)
 
     1..pages
   end
