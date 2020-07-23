@@ -3,7 +3,8 @@ defmodule Films do
   defstruct [:id, :url]
 
   def by_rating(user_id, rating) do
-    url = "https://letterboxd.com/#{user_id}/films/ratings/rated/#{rating}/"
+    url = "https://letterboxd.com/#{user_id}/films/ratings/rated/#{Rating.from(rating)}/"
+
     quantity =
       url
       |> HTTPoison.get()
@@ -12,22 +13,23 @@ defmodule Films do
     films =
       quantity
       |> get_movie_pages
-      |> Enum.reduce([], &(fetch_movies_page("#{url}page/#{&1}/", &2)))
+      |> Enum.reduce([], &fetch_movies_page("#{url}page/#{&1}/", &2))
 
     {:ok, films}
   end
 
   def get_ratings_quantity({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
     {:ok, parsed} = Floki.parse_document(body)
+
     heading =
       parsed
       |> Floki.find(".ui-block-heading")
-      |> Floki.text
+      |> Floki.text()
 
     quantity =
       Regex.named_captures(~r/rated\s(?<quantity>[0-9].)/, heading)
       |> Map.get("quantity")
-      |> String.to_integer
+      |> String.to_integer()
 
     quantity
   end
@@ -39,9 +41,11 @@ defmodule Films do
   end
 
   defp fetch_movies_page(url, acc) do
-    movies = url
-    |> HTTPoison.get
-    |> to_films
+    movies =
+      url
+      |> HTTPoison.get()
+      |> to_films
+
     acc ++ movies
   end
 
