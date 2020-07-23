@@ -8,7 +8,7 @@ defmodule UserProfileTest do
       name: "Daniel Moreira Yokoyama",
       followers: 16,
       following: 13,
-      films: 389,
+      films: 390,
       id: "dmyoko"
     }
 
