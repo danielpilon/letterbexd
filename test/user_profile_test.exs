@@ -9,7 +9,7 @@ defmodule UserProfileTest do
       followers: 16,
       following: 13,
       films: 390,
-      id: "dmyoko"
+      user_id: "dmyoko"
     }
 
     assert user_profile == expected

@@ -5,7 +5,7 @@ defmodule LetterbexdTest do
   test "returns followees list" do
     {:ok, user_profile} = UserProfile.from("dmyoko")
     {:ok, %Network{followees: followees}} = Network.from(user_profile)
-    expected = %{name: "Daniel Pilon", profile_url: "https://letterboxd.com/danielpilon/"}
+    expected = %{name: "Daniel Pilon", profile_url: "https://letterboxd.com/danielpilon/", user_id: "danielpilon"}
     assert followees |> Enum.member?(expected)
   end
 
