@@ -1,5 +1,5 @@
 defmodule Rating do
-  @type rating ::
+  @type t ::
           :five
           | :four_and_half
           | :four
@@ -24,6 +24,6 @@ defmodule Rating do
     :half => "½"
   }
 
-  @spec from(rating()) :: String.t()
+  @spec from(Rating.t()) :: String.t()
   def from(rating), do: @rating_to_string[rating]
 end

@@ -25,7 +25,8 @@ defmodule Letterbexd.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:httpoison, "~> 1.7"},
       {:floki, "~> 0.27.0"},
-      {:html_entities, "~> 0.5.1"}
+      {:html_entities, "~> 0.5.1"},
+      {:nimble_csv, "~> 0.7.0"}
     ]
   end
 end
