@@ -19,7 +19,11 @@ defmodule NetworkFilms do
          {:ok, %Network{followees: followees}} <- Network.from(user_profile) do
       films =
         followees
-        |> Stream.flat_map(&films_by_rating(&1.user_id, rating))
+        |> Task.async_stream(&films_by_rating(&1.user_id, rating),
+          ordered: false,
+          timeout: Kernel.max(user_profile.following * 1000, 5000)
+        )
+        |> Stream.flat_map(fn {:ok, films} -> films end)
         |> Enum.reduce(%{}, &catalog_film_frequencies/2)
         |> Enum.sort(&sort_by_frequency/2)
         |> Enum.into([], &to_film_frequency/1)
