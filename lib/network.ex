@@ -9,9 +9,11 @@ defmodule Network do
         }
   defstruct followees: []
 
+  @base_url Application.get_env(:letterbexd, :letterboxd_url)
+
   @spec from(UserProfile.t()) :: {:ok, Network.t()}
   def from(%UserProfile{user_id: user_id, following: following}) do
-    following_url = "https://letterboxd.com/#{user_id}/following/page/"
+    following_url = "#{@base_url}/#{user_id}/following/page/"
 
     followees =
       following
@@ -37,7 +39,7 @@ defmodule Network do
 
     %{
       name: friend_name |> String.trim(),
-      profile_url: "https://letterboxd.com#{href}",
+      profile_url: "#{@base_url}#{href}",
       user_id: href |> String.replace("/", "")
     }
   end

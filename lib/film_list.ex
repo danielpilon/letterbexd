@@ -1,5 +1,5 @@
 defmodule FilmList do
-  @base_url "https://letterboxd.com"
+  @base_url Application.get_env(:letterbexd, :letterboxd_url)
   @metadata_header ["Date", "Name", "Tags", "URL", "Description"]
   @films_header ["Position", "Name", "Year", "URL", "Description"]
   NimbleCSV.define(FilmListCsvParser, separator: ",", escape: "\"")

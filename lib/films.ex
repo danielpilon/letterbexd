@@ -6,6 +6,8 @@ defmodule Films do
   @enforce_keys [:id, :url]
   defstruct [:id, :url]
 
+  @base_url Application.get_env(:letterbexd, :letterboxd_url)
+
   @spec by_rating(
           String.t(),
           :five
@@ -20,7 +22,7 @@ defmodule Films do
           | :two_and_half
         ) :: {:ok, list(Films.t())}
   def by_rating(user_id, rating) do
-    url = "https://letterboxd.com/#{user_id}/films/ratings/rated/#{Rating.from(rating)}/"
+    url = "#{@base_url}/#{user_id}/films/ratings/rated/#{Rating.from(rating)}/"
 
     films =
       url
@@ -67,7 +69,7 @@ defmodule Films do
     {:ok, parsed} = Floki.parse_document(body)
 
     parsed
-    |> Floki.find("div .poster")
+    |> Floki.find("div.poster")
     |> Enum.map(&to_film/1)
   end
 

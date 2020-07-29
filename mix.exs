@@ -14,9 +14,14 @@ defmodule Letterbexd.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {Letterbexd.Application, [env: Mix.env()]},
+      applications: applications(Mix.env())
     ]
   end
+
+  defp applications(:test), do: applications(:default) ++ [:cowboy, :plug]
+  defp applications(_), do: [:httpoison]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
@@ -26,7 +31,8 @@ defmodule Letterbexd.MixProject do
       {:httpoison, "~> 1.7"},
       {:floki, "~> 0.27.0"},
       {:html_entities, "~> 0.5.1"},
-      {:nimble_csv, "~> 0.7.0"}
+      {:nimble_csv, "~> 0.7.0"},
+      {:plug_cowboy, "~> 2.3"}
     ]
   end
 end

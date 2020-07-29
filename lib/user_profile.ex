@@ -9,10 +9,12 @@ defmodule UserProfile do
   @enforce_keys [:name, :films, :following, :followers, :user_id]
   defstruct [:name, :films, :following, :followers, :user_id]
 
+  @base_url Application.get_env(:letterbexd, :letterboxd_url)
+
   @spec from(String.t()) :: {:ok, UserProfile.t()}
   def from(user_id) do
     user_profile =
-      HTTPoison.get("https://letterboxd.com/#{user_id}/")
+      HTTPoison.get("#{@base_url}/#{user_id}/")
       |> to_user_profile(user_id)
 
     {:ok, user_profile}
