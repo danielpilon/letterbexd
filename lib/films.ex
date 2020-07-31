@@ -10,31 +10,26 @@ defmodule Films do
 
   @spec by_rating(
           String.t(),
-          :five
-          | :four
-          | :four_and_half
-          | :half
-          | :one
-          | :one_and_half
-          | :three
-          | :three_and_half
-          | :two
-          | :two_and_half
+          list(Rating.t())
         ) :: {:ok, list(Films.t())}
-  def by_rating(user_id, rating) do
-    url = "#{@base_url}/#{user_id}/films/ratings/rated/#{Rating.from(rating)}/"
-
+  def by_rating(user_id, ratings) do
     films =
-      url
-      |> HTTPoison.get()
-      |> get_ratings_quantity()
-      |> get_movie_pages()
-      |> Enum.reduce([], &fetch_movies_page("#{url}page/#{&1}/", &2))
+      ratings
+      |> Enum.map(&"#{@base_url}/#{user_id}/films/ratings/rated/#{Rating.from(&1)}/")
+      |> Enum.flat_map(&films_from/1)
 
     {:ok, films}
   end
 
-  def get_ratings_quantity({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+  defp films_from(url) do
+    url
+    |> HTTPoison.get()
+    |> get_ratings_quantity()
+    |> get_movie_pages()
+    |> Enum.reduce([], &fetch_movies_page("#{url}page/#{&1}/", &2))
+  end
+
+  defp get_ratings_quantity({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
     {:ok, parsed} = Floki.parse_document(body)
 
     heading =

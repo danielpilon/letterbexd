@@ -70,12 +70,34 @@ defmodule Letterbexd.MockServer do
     )
   end
 
+  get "/user1/films/ratings/rated/4½/" do
+    conn
+    |> Plug.Conn.send_resp(
+      200,
+      """
+        <h2 class="ui-block-heading">
+          <span class="replace-if-you" data-replacement="You’ve" data-person="user1">You’ve</span> rated 1&nbsp;films <span class="rating -tiny rated-10"> ★★★★★ </span>.
+        </h2>
+      """
+    )
+  end
+
   get "/user1/films/ratings/rated/5/page/1/" do
     conn
     |> Plug.Conn.send_resp(
       200,
       """
         <div class="poster" data-film-id="film1" data-target-link="/film1"></div>
+      """
+    )
+  end
+
+  get "/user1/films/ratings/rated/4½/page/1/" do
+    conn
+    |> Plug.Conn.send_resp(
+      200,
+      """
+        <div class="poster" data-film-id="film2" data-target-link="/film2"></div>
       """
     )
   end
