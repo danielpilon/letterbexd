@@ -1,6 +1,6 @@
 # Letterbexd
 
-**TODO: Add description**
+[![danielpilon](https://circleci.com/gh/danielpilon/letterbexd.svg?style=shield)](<LINK>)
 
 ## Installation
 
