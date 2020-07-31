@@ -50,12 +50,12 @@ defmodule Letterbexd.MockServer do
 
   get "/user2/following/page/1/" do
     conn
-    |> Plug.Conn.send_resp(200, repeatedly("<a href=\"/user2/\" class=\"name\"> User 2 </a>", 25))
+    |> Plug.Conn.send_resp(200, repeatedly("<a href=\"/user1/\" class=\"name\"> User 1 </a>", 25))
   end
 
   get "/user2/following/page/2/" do
     conn
-    |> Plug.Conn.send_resp(200, repeatedly("<a href=\"/user2/\" class=\"name\"> User 2 </a>", 5))
+    |> Plug.Conn.send_resp(200, repeatedly("<a href=\"/user1/\" class=\"name\"> User 1 </a>", 5))
   end
 
   get "/user1/films/ratings/rated/5/" do
