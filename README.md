@@ -1,6 +1,6 @@
 # Letterbexd
 
-[![danielpilon](https://circleci.com/gh/danielpilon/letterbexd.svg?style=shield)](<LINK>)
+[![danielpilon](https://circleci.com/gh/danielpilon/letterbexd.svg?style=shield)](https://circleci.com/gh/danielpilon/letterbexd)
 
 ## Installation
 
