@@ -24,9 +24,9 @@ defmodule NetworkFilms do
           timeout: Kernel.max(user_profile.following * 1000, 5000)
         )
         |> Stream.flat_map(fn {:ok, films} -> films end)
-        |> Enum.reduce(%{}, &catalog_film_frequencies/2)
+        |> Enum.frequencies()
         |> Enum.sort(&sort_by_frequency/2)
-        |> Enum.into([], &to_film_frequency/1)
+        |> Enum.map(&to_film_frequency/1)
 
       {:ok, %NetworkFilms{user_id: user_id, ratings: ratings, films: films}}
     else
@@ -41,9 +41,6 @@ defmodule NetworkFilms do
       err -> raise err
     end
   end
-
-  defp catalog_film_frequencies(film, film_map),
-    do: film_map |> Map.update(film, 1, &Kernel.+(&1, 1))
 
   defp sort_by_frequency({_, quantity_1}, {_, quantity_2}), do: quantity_1 >= quantity_2
 
